@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
 
 public class JLGameManager : MonoBehaviour
 {
@@ -17,6 +13,9 @@ public class JLGameManager : MonoBehaviour
     private Image _panel,
                     _winImage,
                     _loseImage;
+    
+    [SerializeField]
+    private Button _reloadButton;
 
     [SerializeField]
     private AudioClip _winClip,
@@ -38,6 +37,7 @@ public class JLGameManager : MonoBehaviour
         // Se esconden las imagenes y panel.
         _winImage.enabled = false;
         _loseImage.enabled = false;
+        _reloadButton.gameObject.SetActive(false);
         _panel.color = new Color(0, 0, 0, 0);
 
         _audioSource = GetComponent<AudioSource>();
@@ -62,8 +62,9 @@ public class JLGameManager : MonoBehaviour
                 c.a = Mathf.MoveTowards(c.a, 1.0f, Time.deltaTime * 4);
                 _winImage.color = c;
 
+                // El botón de reiniciar se vuelve visible después de un poco de tiempo.
                 if (_time >= _winTime)
-                    Reload();
+                    _reloadButton.gameObject.SetActive(true);
             }
             else if (_state == 2) // Se revela el icono de derrota.
             {
@@ -71,8 +72,9 @@ public class JLGameManager : MonoBehaviour
                 c.a = Mathf.MoveTowards(c.a, 1.0f, Time.deltaTime * 4);
                 _loseImage.color = c;
 
+                // El botón de reiniciar se vuelve visible después de un poco de tiempo.
                 if (_time >= _loseTime)
-                    Reload();
+                    _reloadButton.gameObject.SetActive(true);
             }
         }
     }
@@ -114,15 +116,5 @@ public class JLGameManager : MonoBehaviour
             _audioSource.clip = _winClip;
             _audioSource.PlayDelayed(1 / _winFadeSpeed);
         }
-    }
-
-
-    // Si se llama, se reinicia la escena.
-    public void Reload()
-    {
-        _state = 0;
-
-        // Se reinicia el mapa, usando el nombre de la escena actualmente cargada.
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
